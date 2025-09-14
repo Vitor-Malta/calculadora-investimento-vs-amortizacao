@@ -131,6 +131,28 @@
             transform: translateY(-2px);
         }
         
+        .form-group.opcional {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(139, 92, 246, 0.05));
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px dashed #a78bfa;
+            position: relative;
+        }
+        
+        .form-group.opcional::before {
+            content: '✨ OPCIONAL';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            background: #a78bfa;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.7em;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+        }
+        
         .loading {
             color: #ed8936;
             font-size: 11px;
@@ -237,6 +259,12 @@
             font-weight: 700;
         }
         
+        .highlight-fixa {
+            background: linear-gradient(135deg, #e6fffa, #81e6d9) !important;
+            color: #2c7a7b;
+            font-weight: 700;
+        }
+        
         /* Efeito escada - Ranking visual */
         .rank-primeiro {
             background: linear-gradient(135deg, #ffd700, #ffed4e) !important;
@@ -246,7 +274,7 @@
             box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
             border: 3px solid #ffd700;
             position: relative;
-            z-index: 3;
+            z-index: 4;
         }
         
         .rank-primeiro::before {
@@ -266,7 +294,7 @@
             box-shadow: 0 4px 15px rgba(192, 192, 192, 0.3);
             border: 2px solid #c0c0c0;
             position: relative;
-            z-index: 2;
+            z-index: 3;
         }
         
         .rank-segundo::before {
@@ -286,11 +314,31 @@
             box-shadow: 0 2px 10px rgba(205, 127, 50, 0.3);
             border: 1px solid #cd7f32;
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
         
         .rank-terceiro::before {
             content: '🥉';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1em;
+        }
+        
+        .rank-quarto {
+            background: linear-gradient(135deg, #a0aec0, #cbd5e0) !important;
+            color: #2d3748;
+            font-weight: 700;
+            transform: translateY(2px);
+            box-shadow: 0 1px 5px rgba(160, 174, 192, 0.3);
+            border: 1px solid #a0aec0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .rank-quarto::before {
+            content: '4️⃣';
             position: absolute;
             right: 15px;
             top: 50%;
@@ -462,7 +510,7 @@
                 font-size: 0.9em;
             }
             
-            .rank-primeiro, .rank-segundo, .rank-terceiro {
+            .rank-primeiro, .rank-segundo, .rank-terceiro, .rank-quarto {
                 transform: translateY(0px) !important;
             }
         }
@@ -515,7 +563,7 @@
     <div class="container">
         <div class="header">
             <h1>💰 Calculadora Financeira</h1>
-            <p>Compare: Amortizar Financiamento vs SELIC vs CDI - A decisão inteligente ao seu alcance.</p>
+            <p>Compare: Amortizar Financiamento vs SELIC vs CDI vs Taxa Fixa - A decisão inteligente ao seu alcance.</p>
         </div>
 
         <div class="card">
@@ -546,7 +594,12 @@
                 
                 <div class="form-group">
                     <label for="percentual-cdi">⭐ % do CDI do investimento:</label>
-                    <input type="number" id="percentual-cdi" value="100" step="1" min="50" max="200" placeholder="Ex: 110">
+                    <input type="number" id="percentual-cdi" value="110" step="1" min="50" max="200" placeholder="Ex: 110">
+                </div>
+                
+                <div class="form-group opcional">
+                    <label for="taxa-fixa">💰 Taxa Fixa (% a.a) - Deixe em branco se não tiver:</label>
+                    <input type="number" id="taxa-fixa" step="0.01" min="0" placeholder="Ex: 16.00">
                 </div>
             </div>
             <button class="btn" onclick="calcular()">🚀 Calcular Comparativo Completo</button>
@@ -594,6 +647,14 @@
                         <td><strong>✨ Investimento CDI Líquido (IR 17,5%)</strong></td>
                         <td id="val-invest-cdi-liquido"></td>
                     </tr>
+                    <tr id="linha-taxa-fixa-tabela" style="display:none;">
+                        <td>💰 Taxa Fixa Bruta</td>
+                        <td id="val-taxa-fixa-bruta"></td>
+                    </tr>
+                    <tr id="linha-taxa-fixa-liquida-tabela" class="highlight-fixa" style="display:none;">
+                        <td><strong>🎯 Taxa Fixa Líquida (IR 17,5%)</strong></td>
+                        <td id="val-taxa-fixa-liquida"></td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -610,28 +671,8 @@
                         <th>Status</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr id="linha-financiamento">
-                        <td id="pos-financiamento">-</td>
-                        <td>💸 <strong>Amortizar Financiamento</strong></td>
-                        <td id="comp-financiamento">-</td>
-                        <td>-</td>
-                        <td id="status-financiamento">-</td>
-                    </tr>
-                    <tr id="linha-selic">
-                        <td id="pos-selic">-</td>
-                        <td>🎯 <strong>Investir na SELIC</strong></td>
-                        <td id="comp-selic">-</td>
-                        <td id="diff-selic">-</td>
-                        <td id="status-selic">-</td>
-                    </tr>
-                    <tr id="linha-cdi">
-                        <td id="pos-cdi">-</td>
-                        <td>💎 <strong>Investir no CDI</strong> (<span id="perc-cdi-comp">-</span>)</td>
-                        <td id="comp-cdi">-</td>
-                        <td id="diff-cdi">-</td>
-                        <td id="status-cdi">-</td>
-                    </tr>
+                <tbody id="ranking-tbody">
+                    <!-- As linhas serão inseridas dinamicamente aqui em ordem de ranking -->
                 </tbody>
             </table>
         </div>
@@ -651,10 +692,14 @@
                     <h4>💎 CDI Atual</h4>
                     <span id="ref-cdi">-</span>
                 </div>
+                <div class="dados-item" id="ref-taxa-fixa-item" style="display:none;">
+                    <h4>💰 Taxa Fixa</h4>
+                    <span id="ref-taxa-fixa">-</span>
+                </div>
             </div>
             
             <div class="fonte">
-                * Dados da internet via API BACEN (Série 7811) • Atualizado automaticamente
+                * Dados da internet via API BACEN (Série 7811) • Taxa fixa opcional • Atualizado automaticamente
             </div>
         </div>
     </div>
@@ -848,9 +893,11 @@
             const selic = parseFloat(document.getElementById('selic').value);
             const cdi = parseFloat(document.getElementById('cdi').value);
             const percentualCdi = parseFloat(document.getElementById('percentual-cdi').value);
+            const taxaFixa = parseFloat(document.getElementById('taxa-fixa').value);
             
+            // Verificar campos obrigatórios
             if (isNaN(juros) || isNaN(tr) || isNaN(selic) || isNaN(cdi) || isNaN(percentualCdi)) {
-                alert('⚠️ Preencha todos os campos com valores válidos.');
+                alert('⚠️ Preencha todos os campos obrigatórios com valores válidos.');
                 return;
             }
 
@@ -859,6 +906,14 @@
             const selicLiquida = selic * (1 - ir);
             const investCdiBruto = cdi * (percentualCdi / 100);
             const investCdiLiquido = investCdiBruto * (1 - ir);
+            
+            // Taxa fixa é opcional
+            const temTaxaFixa = !isNaN(taxaFixa) && taxaFixa > 0;
+            let taxaFixaLiquida = 0;
+            
+            if (temTaxaFixa) {
+                taxaFixaLiquida = taxaFixa * (1 - ir);
+            }
 
             // Preencher tabela principal
             document.getElementById('val-juros').textContent = juros.toFixed(2) + '%';
@@ -871,78 +926,103 @@
             document.getElementById('val-invest-cdi-bruto').textContent = investCdiBruto.toFixed(2) + '%';
             document.getElementById('val-invest-cdi-liquido').textContent = investCdiLiquido.toFixed(2) + '%';
 
-            // Preencher tabela comparativa
-            document.getElementById('perc-cdi-comp').textContent = percentualCdi + '%';
-            document.getElementById('comp-financiamento').textContent = custoTotal.toFixed(2) + '%';
-            document.getElementById('comp-selic').textContent = selicLiquida.toFixed(2) + '%';
-            document.getElementById('comp-cdi').textContent = investCdiLiquido.toFixed(2) + '%';
+            // Mostrar/esconder taxa fixa na tabela principal
+            if (temTaxaFixa) {
+                document.getElementById('linha-taxa-fixa-tabela').style.display = 'table-row';
+                document.getElementById('linha-taxa-fixa-liquida-tabela').style.display = 'table-row';
+                document.getElementById('val-taxa-fixa-bruta').textContent = taxaFixa.toFixed(2) + '%';
+                document.getElementById('val-taxa-fixa-liquida').textContent = taxaFixaLiquida.toFixed(2) + '%';
+                
+                document.getElementById('ref-taxa-fixa-item').style.display = 'block';
+                document.getElementById('ref-taxa-fixa').textContent = taxaFixa.toFixed(2) + '%';
+            } else {
+                document.getElementById('linha-taxa-fixa-tabela').style.display = 'none';
+                document.getElementById('linha-taxa-fixa-liquida-tabela').style.display = 'none';
+                document.getElementById('ref-taxa-fixa-item').style.display = 'none';
+            }
 
-            // Calcular diferenças vs financiamento
-            const diffSelic = selicLiquida - custoTotal;
-            const diffCdi = investCdiLiquido - custoTotal;
-
-            document.getElementById('diff-selic').textContent = (diffSelic >= 0 ? '+' : '') + diffSelic.toFixed(2) + '%';
-            document.getElementById('diff-cdi').textContent = (diffCdi >= 0 ? '+' : '') + diffCdi.toFixed(2) + '%';
-
-            // Criar array com as opções e seus respectivos rendimentos
+            // Criar array com as opções
             const opcoes = [
                 { 
                     id: 'financiamento', 
                     nome: 'Amortizar Financiamento', 
+                    icone: '💸',
                     valor: custoTotal, 
                     beneficio: custoTotal,
-                    tipo: 'amortizacao'
+                    tipo: 'amortizacao',
+                    diferenca: 0
                 },
                 { 
                     id: 'selic', 
                     nome: 'Investir na SELIC', 
+                    icone: '🎯',
                     valor: selicLiquida, 
                     beneficio: selicLiquida,
-                    tipo: 'investimento'
+                    tipo: 'investimento',
+                    diferenca: selicLiquida - custoTotal
                 },
                 { 
                     id: 'cdi', 
                     nome: `Investir no CDI (${percentualCdi}%)`, 
+                    icone: '💎',
                     valor: investCdiLiquido, 
                     beneficio: investCdiLiquido,
-                    tipo: 'investimento'
+                    tipo: 'investimento',
+                    diferenca: investCdiLiquido - custoTotal
                 }
             ];
+            
+            // Adicionar taxa fixa se presente
+            if (temTaxaFixa) {
+                opcoes.push({
+                    id: 'taxa-fixa',
+                    nome: `Taxa Fixa (${taxaFixa.toFixed(1)}%)`,
+                    icone: '💰',
+                    valor: taxaFixaLiquida,
+                    beneficio: taxaFixaLiquida,
+                    tipo: 'investimento',
+                    diferenca: taxaFixaLiquida - custoTotal
+                });
+            }
 
-            // Ordenar por benefício CRESCENTE (menor para maior)
-            opcoes.sort((a, b) => a.beneficio - b.beneficio);
+            // Ordenar por benefício DECRESCENTE (melhor primeiro)
+            opcoes.sort((a, b) => b.beneficio - a.beneficio);
 
-            // Reset das classes
-            document.getElementById('linha-financiamento').className = '';
-            document.getElementById('linha-selic').className = '';
-            document.getElementById('linha-cdi').className = '';
+            // Limpar tabela de ranking
+            const rankingTbody = document.getElementById('ranking-tbody');
+            rankingTbody.innerHTML = '';
 
-            // Aplicar rankings em ordem crescente (3º, 2º, 1º)
+            // Classes de ranking
+            const ranks = ['rank-primeiro', 'rank-segundo', 'rank-terceiro', 'rank-quarto'];
+            const positions = ['1º', '2º', '3º', '4º'];
+            const statusTexts = [
+                '<strong>🥇 MELHOR OPÇÃO</strong>',
+                '<strong>🥈 SEGUNDA OPÇÃO</strong>',
+                '<strong>🥉 TERCEIRA OPÇÃO</strong>',
+                '<strong>4️⃣ QUARTA OPÇÃO</strong>'
+            ];
+
+            // Criar linhas da tabela em ordem crescente (1º, 2º, 3º, 4º)
             opcoes.forEach((opcao, index) => {
-                const linha = document.getElementById(`linha-${opcao.id}`);
-                const posicao = document.getElementById(`pos-${opcao.id}`);
-                const status = document.getElementById(`status-${opcao.id}`);
+                const tr = document.createElement('tr');
+                tr.className = ranks[index] || 'rank-quarto';
                 
-                if (index === 0) {
-                    // Terceiro lugar (pior opção)
-                    linha.className = 'rank-terceiro';
-                    posicao.textContent = '3º';
-                    status.innerHTML = '<strong>🥉 TERCEIRA OPÇÃO</strong>';
-                } else if (index === 1) {
-                    // Segundo lugar
-                    linha.className = 'rank-segundo';
-                    posicao.textContent = '2º';
-                    status.innerHTML = '<strong>🥈 SEGUNDA OPÇÃO</strong>';
-                } else {
-                    // Primeiro lugar (melhor opção)
-                    linha.className = 'rank-primeiro';
-                    posicao.textContent = '1º';
-                    status.innerHTML = '<strong>🥇 MELHOR OPÇÃO</strong>';
-                }
+                const diferencaTexto = opcao.diferenca === 0 ? '-' : 
+                                     (opcao.diferenca >= 0 ? '+' : '') + opcao.diferenca.toFixed(2) + '%';
+                
+                tr.innerHTML = `
+                    <td>${positions[index] || '4º'}</td>
+                    <td>${opcao.icone} <strong>${opcao.nome}</strong></td>
+                    <td>${opcao.valor.toFixed(2)}%</td>
+                    <td>${diferencaTexto}</td>
+                    <td>${statusTexts[index] || '<strong>4️⃣ QUARTA OPÇÃO</strong>'}</td>
+                `;
+                
+                rankingTbody.appendChild(tr);
             });
 
-            // Determinar recomendação baseada na melhor opção (último do array após ordenação crescente)
-            const melhorOpcao = opcoes[opcoes.length - 1];
+            // Determinar recomendação baseada na melhor opção (primeiro do array)
+            const melhorOpcao = opcoes[0];
             let textoRecomendacao = '';
             
             if (melhorOpcao.tipo === 'investimento') {
@@ -956,6 +1036,7 @@
                     🎯 RECOMENDAÇÃO: <strong>AMORTIZAR O FINANCIAMENTO</strong><br>
                     💸 Custo do financiamento: ${custoTotal.toFixed(2)}%<br>
                     💰 SELIC líquida: ${selicLiquida.toFixed(2)}% | 💎 CDI líquido: ${investCdiLiquido.toFixed(2)}%<br>
+                    ${temTaxaFixa ? `🎯 Taxa fixa líquida: ${taxaFixaLiquida.toFixed(2)}%<br>` : ''}
                     💡 Amortizar é mais vantajoso que qualquer investimento
                 </div>`;
             }
