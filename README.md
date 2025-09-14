@@ -1,4 +1,4 @@
-# 💰 Calculadora Financeira
+# 💰 Calculadora Financeira - código gerado por IA
 
 Calculadora para comparar se é melhor investir na SELIC/CDI ou amortizar financiamento.
 
